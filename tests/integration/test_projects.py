@@ -67,7 +67,7 @@ def test_get_project_by_slug(client):
     url = reverse("projects-detail", kwargs={"pk": project.slug})
 
     response = client.json.get(url)
-    assert response.status_code == 404
+    assert response.status_code == 401
 
     client.login(project.owner)
     response = client.json.get(url)
@@ -82,7 +82,7 @@ def test_get_private_project_by_slug(client):
 
     response = client.json.get(url, {"slug": project.slug})
 
-    assert response.status_code == 404
+    assert response.status_code == 401
 
     client.login(project.owner)
     response = client.json.get(url, {"slug": project.slug})

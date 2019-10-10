@@ -34,7 +34,7 @@ from taiga.base import response
 from taiga.base.api import ModelCrudViewSet, ModelListViewSet
 from taiga.base.api.mixins import BlockedByProjectMixin, BlockeableSaveMixin, BlockeableDeleteMixin
 from taiga.base.api.permissions import AllowAnyPermission
-from taiga.base.api.utils import get_object_or_404
+from taiga.base.api.utils import get_object_or_404, HttpResponseUnauthorized
 from taiga.base.api.viewsets import ViewSet
 from taiga.base.decorators import list_route
 from taiga.base.decorators import detail_route
@@ -150,7 +150,13 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
 
             qs = qs.filter(flt)
 
-        self.object = get_object_or_404(qs, **kwargs)
+        try:
+            self.object = get_object_or_404(qs, **kwargs)
+        except Http404 as e:
+            if self.request.user.is_authenticated():
+                raise e
+            else:
+                return HttpResponseUnauthorized()
 
         self.check_permissions(request, 'retrieve', self.object)
 

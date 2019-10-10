@@ -42,7 +42,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404 as _get_object_or_404
 
 
@@ -56,3 +56,6 @@ def get_object_or_404(queryset, *filter_args, **filter_kwargs):
     except (TypeError, ValueError):
         raise Http404
 
+
+class HttpResponseUnauthorized(HttpResponse):
+    status_code = 401
